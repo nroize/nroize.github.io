@@ -1,0 +1,16 @@
+import {build} from 'esbuild';
+import {mkdir, copyFile, rm, cp, readFile, writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+await mkdir('dist',{recursive:true});
+await build({entryPoints:['src/app.js'],outfile:'dist/app.js',bundle:true,minify:true,format:'iife',target:['es2022'],legalComments:'eof'});
+for (const file of ['index.html','style.css','favicon.svg','manifest.webmanifest']) await copyFile(`src/${file}`,`dist/${file}`);
+await cp('src/icons','dist/icons',{recursive:true});
+const hash=createHash('sha256');
+for (const file of ['index.html','app.js','style.css','favicon.svg','manifest.webmanifest','icons/logo.svg','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png','icons/apple-touch-icon.png']) hash.update(await readFile('dist/'+file));
+hash.update(await readFile('src/sw.js'));
+await writeFile('dist/sw.js',(await readFile('src/sw.js','utf8')).replace('__BUILD_VERSION__',hash.digest('hex').slice(0,16)));
+await copyFile('LICENSE','dist/LICENSE');
+await copyFile('THIRD-PARTY-NOTICES.md','dist/THIRD-PARTY-NOTICES.md');
+await rm('dist/source.zip',{force:true});
+execFileSync('zip',['-qr','dist/source.zip','src','tests','vendor','build.mjs','serve.mjs','package.json','package-lock.json','LICENSE','THIRD-PARTY-NOTICES.md','README.md','.github','.gitignore']);

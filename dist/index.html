@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Generate Hebrew birthdays, annual calendar events and Yahrzeits as an iCalendar file.">
+  <meta name="theme-color" content="#2859b8"><title>Hebrew Date</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Hebrew Date">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="./style.css">
+  <script>try { const t=localStorage.getItem('hebrew-date-theme'); if(['light','dark'].includes(t)) document.documentElement.dataset.theme=t; } catch {}</script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="./" aria-label="Hebrew Date home"><img class="brand-logo" src="./icons/logo.svg" alt="" width="34" height="34"> Hebrew Date</a><label class="theme"><span aria-hidden="true">◐</span><span class="sr-only">Color theme</span><select id="theme"><option value="system">System theme</option><option value="light">Light theme</option><option value="dark">Dark theme</option></select></label></header>
+  <main>
+    <section class="intro"><h1>Hebrew calendar reminders</h1><p>Choose a Hebrew date and download annual events for your calendar.</p></section>
+    <aside class="install-card" id="install-card" hidden aria-label="Save Hebrew Date as an app"><img src="./icons/logo.svg" alt="" width="42" height="42"><div><strong>Save to home screen</strong><p id="offline-status">iPhone, iPad and Android</p></div><button type="button" id="save-app" aria-haspopup="dialog">Save app <span aria-hidden="true">↗</span></button></aside>
+    <div class="workspace">
+      <section class="form-panel" aria-labelledby="form-heading">
+        <h2 id="form-heading">Event details</h2>
+        <form id="form">
+          <fieldset class="mode"><legend class="sr-only">Event type</legend><label><input type="radio" name="mode" value="annual" checked><span>Annual date</span></label><label><input type="radio" name="mode" value="birthday"><span>Birthday</span></label><label><input type="radio" name="mode" value="yahrzeit"><span>Yahrzeit</span></label></fieldset>
+          <label class="field">Event name <span class="optional">optional</span><input id="title" name="title" placeholder="e.g. Dad’s Yahrzeit" maxlength="240" autocomplete="off"></label>
+          <div class="date-fields"><label class="field">Hebrew day<select name="day" id="day" aria-label="Hebrew day"></select></label><label class="field">Hebrew month<select name="month" id="month" aria-label="Hebrew month"></select></label></div>
+          <label class="field" id="original-field" hidden><span id="original-label">Original Hebrew year</span><input name="original" id="original" type="number" min="3762" max="13758" step="1"><span class="hint" id="original-hint">The year of death, used for Yahrzeit calculations.</span></label>
+          <div class="two-fields"><label class="field">Starting Hebrew year<input name="start" id="start" type="number" min="3762" max="13759" required step="1"></label><label class="field">Repetitions<input name="count" id="count" type="number" min="1" max="9999" value="18" required step="1"></label></div>
+          <details class="options"><summary>Date options <span aria-hidden="true">+</span></summary><div class="options-content"><label class="field" id="missing-field">When the 30th doesn’t exist<select name="missing" id="missing"><option value="previous">Use the 29th of the same month</option><option value="next">Use the 1st of the next month</option><option value="skip">Skip that year</option></select></label><label class="checkbox"><input type="checkbox" name="evening" id="evening"><span>Include the preceding evening’s date<span class="hint">A two-day all-day event, without an exact sunset time.</span></span></label><p class="hint" id="rules"></p></div></details>
+          <p id="error" class="error" role="alert" hidden></p>
+          <button class="download" id="download" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v4h14v-4"/></svg>Download calendar <span class="file-type">.ics</span></button>
+          <p class="compatibility">Import the .ics file into Apple Calendar, Google Calendar or Outlook.</p><p id="status" class="status" role="status"></p>
+        </form>
+      </section>
+      <section class="preview-panel" aria-labelledby="preview-heading"><div class="preview-top"><span class="eyebrow">PREVIEW</span><span class="live-dot">Live preview</span></div><div class="preview-heading"><h2 id="preview-heading">Annual date</h2><p id="hebrew-label" lang="he" dir="rtl"></p></div><p class="preview-summary" id="preview-summary" aria-live="polite"></p><div id="dates"></div><div class="pagination" id="pagination"><button type="button" id="previous" aria-label="Previous dates">←</button><span id="page-label"></span><button type="button" id="next" aria-label="Next dates">→</button></div><div class="sunset-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 18h18M6 15a6 6 0 0 1 12 0M12 2v3M3 7l2 2m14-2-2 2M1 13h3m16 0h3"/></svg><p>A Hebrew day begins at sunset the evening before. Your calendar events mark the daytime date.</p></div></section>
+    </div>
+    <details class="about"><summary>Date rules</summary><p>Birthday mode uses the Hebrew birth year to handle Adar and missing 30ths automatically. A missing 30th moves to the 1st of the next month. Yahrzeit calculations require the original Hebrew year and use Hebcal’s rules for Adar and missing dates. Customs vary; check the preview against your practice. For annual dates, Adar becomes Adar II in leap years; Adar I and II become Adar in common years. Missing 30ths follow your selected option. Skipped years do not count toward repetitions.</p><p>Dates are calculated in your browser and are not uploaded. Calculations by <a href="https://hebcal.github.io/api/hdate/" target="_blank" rel="noopener noreferrer">Hebcal</a>. Exports support Gregorian years 0001–9999.</p></details>
+  </main>
+  <footer><span><a href="./source.zip">Source</a> · <a href="./LICENSE">License</a></span><span>Made with <span class="heart" aria-label="love">♥</span> by <a href="https://linkedin.com/in/nroize" target="_blank" rel="noopener noreferrer">Natanel Roizenman</a></span></footer>
+  <dialog id="install-dialog" aria-labelledby="install-title" aria-describedby="install-description">
+    <button type="button" class="close-dialog" id="close-install" aria-label="Close save app guide">×</button>
+    <img class="dialog-logo" src="./icons/logo.svg" alt="" width="64" height="64">
+    <h2 id="install-title">Save to home screen</h2><p id="install-description">Add the app to your home screen. It works offline after the first visit.</p>
+    <button type="button" class="download" id="native-install" hidden>Install Hebrew Date</button>
+    <div class="install-platform" role="group" aria-label="Installation instructions for your device"><button type="button" data-platform="ios" aria-pressed="true">iPhone & iPad</button><button type="button" data-platform="android" aria-pressed="false">Android</button></div>
+    <div id="install-ios"><ol class="install-steps"><li><span>1</span><div><strong>Open this page in Safari.</strong><p>If you’re in another browser or app, copy the link and open it in Safari.</p></div></li><li><span>2</span><div><strong>Tap Share <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-label="square with an upward arrow" role="img"><path d="M12 15V2m-4 4 4-4 4 4M7 9H4v12h16V9h-3"/></svg></strong><p>Look for the square with an upward arrow. In some layouts, open the page menu first.</p></div></li><li><span>3</span><div><strong>Choose “Add to Home Screen”.</strong><p>Keep “Open as Web App” on if shown, then tap “Add”.</p></div></li></ol></div>
+    <div id="install-android" hidden><ol class="install-steps"><li><span>1</span><div><strong>Open this page in Chrome.</strong><p>Use the hosted page, rather than a downloaded file.</p></div></li><li><span>2</span><div><strong>Open the three-dot menu ⋮</strong><p>Look for the menu near the address bar.</p></div></li><li><span>3</span><div><strong>Choose “Add to Home screen”.</strong><p>Tap “Install” if offered, then confirm. Some versions show “Install app” directly.</p></div></li></ol></div>
+    <p class="install-desktop">On a computer, use your browser’s install icon in the address bar or its app menu, if available.</p><p id="install-status" class="status" role="status"></p>
+  </dialog>
+  <noscript>This app needs JavaScript to calculate Hebrew dates and create your calendar file.</noscript>
+</body>
+</html>

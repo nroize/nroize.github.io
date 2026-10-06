@@ -1,0 +1,21 @@
+{
+  "name": "hebrew-date",
+  "version": "1.0.0",
+  "description": "Hebrew calendar anniversaries as downloadable iCalendar files",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test tests/*.test.js",
+    "start": "node serve.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-2.0-only",
+  "type": "module",
+  "dependencies": {
+    "@hebcal/hdate": "0.23.0"
+  },
+  "private": true,
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}
