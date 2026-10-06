@@ -15,6 +15,8 @@ self.addEventListener('fetch', event=>{
   const url=new URL(event.request.url);
   if(url.origin!==BASE.origin || !url.pathname.startsWith(BASE.pathname)) return;
   if(event.request.mode==='navigate') {
+    // Other GitHub Pages projects can live beneath our root worker scope.
+    if(url.pathname!==BASE.pathname && url.pathname!==new URL('index.html',BASE).pathname) return;
     // Keep the HTML and JavaScript from the same release. New workers refresh
     // the whole shell together; the next launch uses the updated cache.
     event.respondWith(caches.match(new URL('index.html',BASE).href,{cacheName:CACHE}).then(cached=>cached||fetch(event.request)));
